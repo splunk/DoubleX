@@ -106,9 +106,12 @@ def limit_memory(maxsize):
 
     soft, hard = resource.getrlimit(resource.RLIMIT_AS)
 
-    if maxsize > hard:
-        print(f"Memory limit request ({maxsize}) over hard limit, setting to soft limit ({soft})")
-        maxsize = soft
-    resource.setrlimit(resource.RLIMIT_AS, (maxsize, hard))
+    # if maxsize >= resource.RLIMIT_MEMLOCK:
+    #     print(f"Memory limit request ({maxsize}) over hard limit, setting to system max ("+str(resource.RLIMIT_MEMLOCK)+")", sys.stderr)
+    #     sys.stderr.flush()
+    #     maxsize = resource.RLIMIT_MEMLOCK
 
-
+    try:
+        resource.setrlimit(resource.RLIMIT_AS, (maxsize, hard))
+    except ValueError as value_error:
+        print(f"Failed to set soft/hard memory limit to {maxsize}/{hard}: {value_error}")
