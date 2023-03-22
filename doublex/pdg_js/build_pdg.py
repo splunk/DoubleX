@@ -188,7 +188,7 @@ def get_data_flow(input_file, benchmarks, store_pdgs=None, check_var=False, beau
             store_pdg = os.path.join(store_pdgs, os.path.basename(input_file.replace('.js', '')))
             pickle_dump_process(dfg_nodes, store_pdg)
             json_analysis = os.path.join(store_pdgs, os.path.basename(esprima_json))
-            with open(json_analysis, 'w') as json_data:
+            with open(json_analysis, 'w', encoding="utf-8") as json_data:
                 json.dump(benchmarks, json_data, indent=4, sort_keys=False, default=default,
                           skipkeys=True)
         return dfg_nodes
@@ -229,7 +229,7 @@ def worker(my_queue):
         try:
             root, js, store_pdgs = my_queue.get(timeout=2)
             handle_one_pdg(root, js, store_pdgs)
-        except Exception as e:
+        except Exception as e: #pylint: disable=broad-except
             logging.exception(e)
             break
 

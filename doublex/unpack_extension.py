@@ -22,7 +22,9 @@ import os
 import json
 import logging
 import fnmatch
-import hashlib
+import jsbeautifier
+
+# import hashlib
 import argparse
 from urllib.parse import urljoin
 from zipfile import ZipFile
@@ -55,18 +57,20 @@ def read_from_zip(zf, filename):
 def beautify_script(content, suffix):
     """ Beautifies a script with js-beautify (https://www.npmjs.com/package/js-beautify). """
 
-    filehash = hashlib.md5(content.encode()).hexdigest()
-    temp_file = "/tmp/%s_%s" % (filehash, suffix.replace("/", "_"))
+    # filehash = hashlib.md5(content.encode()).hexdigest()
+    # temp_file = "/tmp/%s_%s" % (filehash, suffix.replace("/", "_"))
 
-    with open(temp_file, "w") as fh:
-        fh.write(content)
-    os.system("js-beautify -t -r %s > /dev/null" % temp_file)
+    # with open(temp_file, "w") as fh:
+    #     fh.write(content)
+    # # os.system("js-beautify -t -r %s > /dev/null" % temp_file)
 
-    with open(temp_file, "r") as fh:
-        content = fh.read()
-    os.unlink(temp_file)
+    # with open(temp_file, "r") as fh:
+    #     content = fh.read()
+    # os.unlink(temp_file)
 
-    return content
+    return jsbeautifier.beautify(content)
+
+
 
 
 def pack_and_beautify(extension_zip, scripts):

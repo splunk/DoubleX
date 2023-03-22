@@ -12,6 +12,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.10"
 graphviz = "^0.20.1"
+jsbeautifier = "^1.14.7"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -35,3 +36,4 @@ ignore=[
 
 [tool.pylint.MASTER]
 disable="invalid-name"
+max-line-length=200
