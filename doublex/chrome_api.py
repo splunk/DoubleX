@@ -18,8 +18,8 @@
     Message passing APIs for Chromium-based extensions.
 """
 
-import browser_api
-import handle_messages as m
+from . import browser_api
+from . import handle_messages as m
 
 GLOBAL_PM = browser_api.GLOBAL_PM
 

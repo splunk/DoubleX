@@ -22,12 +22,13 @@
 
 
 """
-    Display graphs (AST, CFG, PDG) using the graphviz library.
+    Display an Extension Dependence Graph (EDG) using the graphviz library.
 """
 
-import graphviz
+import copy
+import graphviz #type: ignore
 
-from . import node as _node
+from .pdg_js import node as _node
 
 
 def append_leaf_attr(node, graph):
@@ -44,9 +45,8 @@ def append_leaf_attr(node, graph):
 
     if node.is_leaf():
         leaf_id = str(node.id) + 'leaf_'
-        graph.attr('node', style='filled', color='lightgoldenrodyellow',
-                   fillcolor='lightgoldenrodyellow')
-        graph.attr('edge', color='orange')
+        graph.attr('node', style='filled', color='white', fillcolor='white')
+        graph.attr('edge', color='grey', style='tapered')
         got_attr, node_attributes = node.get_node_attributes()
         if got_attr:  # Got attributes
             leaf_attr = str(node_attributes)
@@ -54,7 +54,7 @@ def append_leaf_attr(node, graph):
             graph.edge(str(node.id), leaf_id)
 
 
-def produce_ast(ast_nodes, attributes, graph=graphviz.Graph(comment='AST representation')):
+def produce_ast(ast_nodes, attributes, graph=graphviz.Digraph(comment='AST representation')):
     """
         Produce an AST in graphviz format.
 
@@ -73,11 +73,11 @@ def produce_ast(ast_nodes, attributes, graph=graphviz.Graph(comment='AST represe
             graphviz formatted graph.
     """
 
-    graph.attr('node', color='black', style='filled', fillcolor='white')
+    graph.attr('node', color='black', style='filled', fillcolor='lightgoldenrodyellow')
     graph.attr('edge', color='black')
     graph.node(str(ast_nodes.id), ast_nodes.name)
     for child in ast_nodes.children:
-        graph.attr('node', color='black', style='filled', fillcolor='white')
+        graph.attr('node', color='black', style='filled', fillcolor='lightgoldenrodyellow')
         graph.attr('edge', color='black')
         graph.edge(str(ast_nodes.id), str(child.id))
         produce_ast(child, attributes, graph)
@@ -113,8 +113,8 @@ def cfg_type_node(child):
     """ Different form according to statement node or not. """
 
     if isinstance(child, _node.Statement) or child.is_comment():
-        return ['box', 'red', 'lightpink']
-    return ['ellipse', 'blue', 'lightblue2']
+        return ['box', 'mediumblue', 'lightblue', 'dotted']
+    return ['ellipse', 'black', 'lightgoldenrodyellow', 'bold']
 
 
 def produce_cfg_one_child(child, data_flow, attributes,
@@ -140,16 +140,16 @@ def produce_cfg_one_child(child, data_flow, attributes,
     """
 
     type_node = cfg_type_node(child)
-    graph.attr('node', shape=type_node[0], style='filled', color=type_node[2],
+    graph.attr('node', shape=type_node[0], style='filled', color=type_node[1],
                fillcolor=type_node[2])
-    graph.attr('edge', color=type_node[1])
+    graph.attr('edge', color=type_node[1], style=type_node[3])
     graph.node(str(child.id), child.name)
 
     for child_statement_dep in child.statement_dep_children:
         child_statement = child_statement_dep.extremity
         type_node = cfg_type_node(child_statement)
-        graph.attr('node', shape=type_node[0], color=type_node[2], fillcolor=type_node[2])
-        graph.attr('edge', color=type_node[1])
+        graph.attr('node', shape=type_node[0], color=type_node[1], fillcolor=type_node[2])
+        graph.attr('edge', color=type_node[1], style=type_node[3])
         graph.edge(str(child.id), str(child_statement.id), label=child_statement_dep.label)
         produce_cfg_one_child(child_statement, data_flow=data_flow, attributes=attributes,
                               graph=graph)
@@ -160,28 +160,28 @@ def produce_cfg_one_child(child, data_flow, attributes,
         for child_cf_dep in child.control_dep_children:
             child_cf = child_cf_dep.extremity
             type_node = cfg_type_node(child_cf)
-            graph.attr('node', shape=type_node[0], color=type_node[2], fillcolor=type_node[2])
-            graph.attr('edge', color=type_node[1])
+            graph.attr('node', shape=type_node[0], color=type_node[1], fillcolor=type_node[2])
+            graph.attr('edge', color='mediumblue', style=type_node[3])
             graph.edge(str(child.id), str(child_cf.id), label=str(child_cf_dep.label))
             produce_cfg_one_child(child_cf, data_flow=data_flow, attributes=attributes, graph=graph)
             if attributes:
                 append_leaf_attr(child_cf, graph)
 
     if data_flow:
-        graph.attr('edge', color='green')
+        graph.attr('edge', color='darkorange', style='dashed')
         if isinstance(child, _node.Identifier):
             for child_data_dep in child.data_dep_children:
                 child_data = child_data_dep.extremity
                 type_node = cfg_type_node(child)
-                graph.attr('node', shape=type_node[0], color=type_node[2], fillcolor=type_node[2])
+                graph.attr('node', shape=type_node[0], color=type_node[1], fillcolor=type_node[2])
                 graph.edge(str(child.id), str(child_data.id), label=child_data_dep.label)
                 # No call to the func as already recursive for data/statmt dep on the same nodes
                 # logging.info("Data dependency on the variable " + child_data.attributes['name'])
-        graph.attr('edge', color='seagreen')
+        graph.attr('edge', color='deepskyblue', style='dashed')
         if hasattr(child, 'fun_param_parents'):  # Function parameters flow
             for child_param in child.fun_param_parents:
                 type_node = cfg_type_node(child)
-                graph.attr('node', shape=type_node[0], color=type_node[2], fillcolor=type_node[2])
+                graph.attr('node', shape=type_node[0], color=type_node[1], fillcolor=type_node[2])
                 graph.edge(str(child.id), str(child_param.id), label='param')
 
     return graph
@@ -235,3 +235,37 @@ def draw_pdg(dfg_nodes, attributes=False, save_path=None):
         dot.render(save_path, view=False)
         graphviz.render(filepath=save_path, engine='dot', format='eps')
     dot.clear()
+
+
+def draw_extensions(pdg_cs, pdg_bp, graph, attributes=True, save_path=None):
+    """
+        Display the Extension Dependence Graph (EDG). No links CS/BP yet.
+
+        -------
+        Parameters:
+        - pdg_cs: Node
+            PDG of the content script.
+        - pdg_bp: Node
+            PDG of the background page.
+        - graph: graphviz object
+            Graph object.
+        - save_path: str
+            Path of the file to store the EDG in.
+        - attributes: bool
+            Whether to display the leaf attributes or not. Default: True.
+    """
+
+    dot = graphviz.Digraph()
+    pdg_extension = copy.copy(pdg_cs.children)
+    pdg_extension.extend(pdg_bp.children)
+    for node in pdg_extension:
+        dot = produce_cfg_one_child(child=node, data_flow=True, graph=graph, attributes=attributes)
+    try:
+        if save_path is None:
+            dot.view()
+        else:
+            dot.render(save_path, view=False)
+            graphviz.render(filepath=save_path, engine='dot', format='eps')
+        dot.clear()
+    except:
+        pass

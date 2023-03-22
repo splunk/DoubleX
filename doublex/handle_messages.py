@@ -1,3 +1,4 @@
+#pylint: disable=invalid-name
 # Copyright (C) 2021 Aurore Fass
 #
 # This program is free software: you can redistribute it and/or modify
@@ -17,17 +18,7 @@
 """
     Handling the messages sent and received between the content script and the background page.
     Storage in a MessageType object so that messages of the same category are stored together.
-"""
 
-import logging
-
-import pdg_js.node as _node
-
-from get_pdg import get_node_computed_value_e
-import messages
-
-
-"""
 In the following, if not stated otherwise:
     - node: Node
         Current CallExpression node.
@@ -37,6 +28,14 @@ In the following, if not stated otherwise:
             - for a given communication channel (WaAndCs, CsAndBp, WaAndBp);
             - for a given category (B1 vs. B2, C1 vs. C2).
 """
+
+import logging
+
+from .pdg_js import node as _node
+
+from .get_pdg import get_node_computed_value_e
+from . import messages
+
 
 
 def find_callback_def(handle_callback, param_nb):

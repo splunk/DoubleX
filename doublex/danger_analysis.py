@@ -20,10 +20,10 @@
 
 import logging
 
-import pdg_js.node as _node
+from .pdg_js import node as _node
 
-import utility
-from get_pdg import get_node_computed_value_e
+from . import utility
+from .get_pdg import get_node_computed_value_e
 
 PRINT_DEBUG = utility.PRINT_DEBUG
 

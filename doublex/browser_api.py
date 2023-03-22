@@ -18,7 +18,7 @@
     Message passing APIs for all browsers except Chromium based.
 """
 
-import handle_messages as m
+from . import handle_messages as m
 
 GLOBAL_PM = ['window.postMessage', 'this.postMessage', 'that.postMessage', 'self.postMessage',
              'top.postMessage', 'global.postMessage', '.source.postMessage']

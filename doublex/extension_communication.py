@@ -21,19 +21,19 @@
 import logging
 import timeit
 import json
-import graphviz
+import graphviz #type: ignore
 
-import pdg_js.node as _node
-from pdg_js.value_filters import display_values
-import pdg_js.utility_df as utility_df
+from .pdg_js import node as _node
+from .pdg_js.value_filters import display_values
+from .pdg_js import utility_df
+from .get_pdg import get_node_computed_value_e, get_node_value_e
 
-import get_pdg
-from get_pdg import get_node_computed_value_e, get_node_value_e
+from . import get_pdg
 # import display_extension
-import browser_api
-import chrome_api
-import messages
-import utility
+from . import browser_api
+from . import chrome_api
+from . import messages
+from . import utility
 
 PRINT_DEBUG = utility.PRINT_DEBUG
 

@@ -24,7 +24,7 @@
 
 import logging
 
-from get_pdg import get_node_computed_value_e
+from .get_pdg import get_node_computed_value_e
 
 
 class MessageApi:

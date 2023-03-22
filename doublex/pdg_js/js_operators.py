@@ -178,8 +178,8 @@ def compute_operators(operator, node_a, node_b, initial_node=None, recdepth=0, r
             return operator_plus(a, b)
         if a is None or b is None:
             return None
-        if (not isinstance(a, str) or isinstance(a, str) and not '.' in a)\
-                and (not isinstance(b, str) or isinstance(b, str) and not '.' in b):
+        if (not isinstance(a, str) or isinstance(a, str) and '.' not in a)\
+                and (not isinstance(b, str) or isinstance(b, str) and '.' not in b):
             # So that if MemExpr could not be fully computed we do not take any hasty decisions
             # For ex: data.message.split(-).1.toUpperCase() == POST is undecidable for us
             # But abc == abc is not

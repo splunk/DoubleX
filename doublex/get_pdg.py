@@ -21,10 +21,10 @@
 import logging
 import pickle
 
-import pdg_js.node as _node
-from pdg_js.build_pdg import get_data_flow
-from pdg_js.js_operators import get_node_computed_value, get_node_value
-import pdg_js.utility_df as utility_df
+from .pdg_js import node as _node
+from .pdg_js.build_pdg import get_data_flow
+from .pdg_js.js_operators import get_node_computed_value, get_node_value
+from .pdg_js import utility_df
 
 
 def get_pdg(file_path, res_dict, store_pdgs=None):

@@ -20,9 +20,9 @@
 
 import logging
 
-import pdg_js.utility_df as utility_df
+from .pdg_js import  utility_df
 
-import extension_communication
+from . import extension_communication
 
 
 class WaCommunication:

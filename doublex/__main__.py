@@ -21,7 +21,7 @@
 import os
 import argparse
 
-from vulnerability_detection import analyze_extension
+from .vulnerability_detection import analyze_extension
 
 
 SRC_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__)))
