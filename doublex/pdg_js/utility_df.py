@@ -61,8 +61,8 @@ class UpperThresholdFilter(logging.Filter):
         self._threshold = threshold
         super(UpperThresholdFilter, self).__init__(*args, **kwargs)
 
-    def filter(self, rec):
-        return rec.levelno <= self._threshold
+    def filter(self, record):
+        return record.levelno <= self._threshold
 
 
 logging.basicConfig(format='%(levelname)s: %(filename)s: %(message)s', level=logging.CRITICAL)
@@ -92,10 +92,10 @@ class Timeout:
         signal.signal(signal.SIGALRM, self.raise_timeout)
         signal.alarm(self.sec)
 
-    def __exit__(self, *args):
+    def __exit__(self, *args): #pylint: disable=unused-argument
         signal.alarm(0)  # disable alarm
 
-    def raise_timeout(self, *args):
+    def raise_timeout(self, *args): #pylint: disable=unused-argument
         """ raise a timeout """
         traceback.print_stack(limit=100)
         raise Timeout.Timeout()
@@ -104,10 +104,9 @@ class Timeout:
 def limit_memory(maxsize):
     """ Limiting the memory usage to maxsize (in bytes), soft limit. """
 
-    soft, hard = resource.getrlimit(resource.RLIMIT_AS)
+    _soft, hard = resource.getrlimit(resource.RLIMIT_AS)
 
     # if maxsize >= resource.RLIMIT_MEMLOCK:
-    #     print(f"Memory limit request ({maxsize}) over hard limit, setting to system max ("+str(resource.RLIMIT_MEMLOCK)+")", sys.stderr)
     #     sys.stderr.flush()
     #     maxsize = resource.RLIMIT_MEMLOCK
 
