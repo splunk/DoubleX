@@ -75,7 +75,7 @@ logging.basicConfig(format='%(levelname)s: %(filename)s: %(message)s', level=log
 def micro_benchmark(message, elapsed_time):
     """ Micro benchmarks. """
     logging.info('%s %s%s', message, str(elapsed_time), 's')
-    print('CURRENT STATE %s %s%s' % (message, str(elapsed_time), 's'))
+    print(f"CURRENT STATE {message} {elapsed_time}s")
     return timeit.default_timer()
 
 
@@ -96,6 +96,7 @@ class Timeout:
         signal.alarm(0)  # disable alarm
 
     def raise_timeout(self, *args):
+        """ raise a timeout """
         traceback.print_stack(limit=100)
         raise Timeout.Timeout()
 
@@ -104,4 +105,9 @@ def limit_memory(maxsize):
     """ Limiting the memory usage to maxsize (in bytes), soft limit. """
 
     soft, hard = resource.getrlimit(resource.RLIMIT_AS)
+
+    if maxsize > hard:
+        maxsize = hard
     resource.setrlimit(resource.RLIMIT_AS, (maxsize, hard))
+
+
