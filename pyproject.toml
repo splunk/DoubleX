@@ -1,0 +1,37 @@
+[tool.poetry]
+name = "doublex"
+version = "0.0.1"
+description = "Statically Detecting Vulnerable Data Flows in Browser Extensions at Scale"
+authors = [
+    "James Hodgkinson <jhodgkinson@splunk.com>",
+    "Aurore Fass",
+]
+license = "AGPL-3.0"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+graphviz = "^0.20.1"
+
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.0.257"
+mypy = "^1.1.1"
+types-beautifulsoup4 = "^4.12.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+
+[project.scripts]
+"doublex" = 'doublex.__main__:main'
+
+[tool.ruff]
+line-length=200
+ignore=[
+    "E722",
+    ]
+
+[tool.pylint.MASTER]
+disable="invalid-name"
