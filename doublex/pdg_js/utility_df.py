@@ -107,7 +107,8 @@ def limit_memory(maxsize):
     soft, hard = resource.getrlimit(resource.RLIMIT_AS)
 
     if maxsize > hard:
-        maxsize = hard
+        print(f"Memory limit request ({maxsize}) over hard limit, setting to soft limit ({soft})")
+        maxsize = soft
     resource.setrlimit(resource.RLIMIT_AS, (maxsize, hard))
 
 
